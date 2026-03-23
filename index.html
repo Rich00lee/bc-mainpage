@@ -70,43 +70,13 @@
     background-position: center;
     background-repeat: no-repeat;
   }
-  .bc-hero__overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-  }
-  .bc-hero__content {
-    position: relative;
-    z-index: 1;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .bc-hero__tag {
-    display: inline-block;
-    background-color: var(--bc-cta);
-    color: #1a1a1a;
-    font-size: 18px;
-    font-weight: 700;
-    padding: 12px 28px;
-    border-radius: 40px;
-    letter-spacing: -0.3px;
-    white-space: nowrap;
-  }
   @media (max-width: 768px) {
     .bc-hero { height: var(--hero-h-mobile); }
-    .bc-hero__tag { font-size: 13px; padding: 9px 18px; }
   }
 </style>
 
 <section class="bc-hero">
   <div class="bc-hero__bg"></div>
-  <div class="bc-hero__overlay"></div>
-  <div class="bc-hero__content">
-    <!-- [수정 포인트] 태그 텍스트 -->
-    <span class="bc-hero__tag">무료특강 - 3월 25일(수) 저녁 8시</span>
-  </div>
 </section>
 
 
