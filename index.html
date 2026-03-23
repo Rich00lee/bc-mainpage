@@ -53,30 +53,19 @@
 
 <style>
   .bc-hero {
-    --hero-h-desktop: 400px;
-    --hero-h-mobile: 250px;
     position: relative;
     width: 100%;
-    height: var(--hero-h-desktop);
-    overflow: hidden;
     background-color: #1a1a1a;
     font-family: var(--bc-font);
   }
   .bc-hero__bg {
-    position: absolute;
-    inset: 0;
-    background-image: url('hero.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  @media (max-width: 768px) {
-    .bc-hero { height: var(--hero-h-mobile); }
+    width: 100%;
+    display: block;
   }
 </style>
 
 <section class="bc-hero">
-  <div class="bc-hero__bg"></div>
+  <img class="bc-hero__bg" src="hero.webp" alt="무료특강 배너" />
 </section>
 
 
