@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>블록캠퍼스 메인</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       공통 디자인 시스템 — CSS 변수
+       수정 포인트: 브랜드 색상, 폰트, 간격 등을 여기서 일괄 변경
+    ============================================================ */
+    :root {
+      --bc-primary: #2a64f6;
+      --bc-cta: #f5c242;
+      --bc-bg-white: #ffffff;
+      --bc-bg-gray: #f5f7fa;
+      --bc-text-title: #1a1a1a;
+      --bc-text-body: #666666;
+      --bc-text-sub: #999999;
+      --bc-naver: #03c75a;
+      --bc-danger: #c0392b;
+      --bc-max-width: 1200px;
+      --bc-section-padding: 60px 0;
+      --bc-card-radius: 12px;
+      --bc-card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --bc-font: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+    }
+
+    /* 리셋 */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--bc-font);
+      color: var(--bc-text-title);
+      background: var(--bc-bg-white);
+      -webkit-font-smoothing: antialiased;
+      /* 하단 고정바 높이만큼 여백 */
+      padding-bottom: 56px;
+    }
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+  섹션 01: 히어로 배너
+  수정 포인트:
+    1. [이미지 URL] 아래 --hero-image 값을 교체
+    2. [태그 텍스트] .hero-tag 내부 텍스트를 교체
+    3. [높이] --hero-h-desktop / --hero-h-mobile 조정
+============================================================ -->
+
+<style>
+  .bc-hero {
+    --hero-h-desktop: 400px;
+    --hero-h-mobile: 250px;
+    position: relative;
+    width: 100%;
+    height: var(--hero-h-desktop);
+    overflow: hidden;
+    background-color: #1a1a1a;
+    font-family: var(--bc-font);
+  }
+  .bc-hero__bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('https://d118wd34u6nbvx.cloudfront.net/mallId-41/79ff4975-93e5-4092-a3b5-80cc3aaa717b-1773036269276.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .bc-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+  }
+  .bc-hero__content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bc-hero__tag {
+    display: inline-block;
+    background-color: var(--bc-cta);
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 40px;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+  @media (max-width: 768px) {
+    .bc-hero { height: var(--hero-h-mobile); }
+    .bc-hero__tag { font-size: 13px; padding: 9px 18px; }
+  }
+</style>
+
+<section class="bc-hero">
+  <div class="bc-hero__bg"></div>
+  <div class="bc-hero__overlay"></div>
+  <div class="bc-hero__content">
+    <!-- [수정 포인트] 태그 텍스트 -->
+    <span class="bc-hero__tag">무료특강 - 3월 25일(수) 저녁 8시</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  섹션 02: 퀵링크
+  수정 포인트:
+    1. [메인 카피] .ql-title 내부 텍스트 교체
+    2. [링크 URL] 각 <a> href 교체
+    3. [아이콘] SVG path 교체
+    4. [레이블] 각 .ql-label 텍스트 교체
+============================================================ -->
+
+<style>
+  .bc-quicklinks {
+    background-color: var(--bc-bg-white);
+    padding: var(--bc-section-padding);
+    font-family: var(--bc-font);
+  }
+  .bc-quicklinks__inner {
+    max-width: var(--bc-max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+  .bc-ql__title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--bc-text-title);
+    line-height: 1.5;
+    letter-spacing: -0.5px;
+  }
+  .bc-ql__title .highlight { color: var(--bc-primary); }
+  .bc-ql__list {
+    list-style: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+  }
+  .bc-ql__link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .bc-ql__icon-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+  }
+  .bc-ql__link:hover .bc-ql__icon-wrap {
+    background-color: var(--bc-primary);
+    transform: translateY(-3px);
+  }
+  .bc-ql__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bc-text-title);
+    text-align: center;
+    white-space: nowrap;
+  }
+  @media (max-width: 768px) {
+    .bc-ql__title { font-size: 20px; }
+    .bc-ql__list { gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .bc-ql__icon-wrap { width: 60px; height: 60px; }
+    .bc-ql__icon-wrap svg { width: 28px; height: 28px; }
+    .bc-ql__label { font-size: 12px; }
+  }
+</style>
+
+<section class="bc-quicklinks">
+  <div class="bc-quicklinks__inner">
+    <h2 class="bc-ql__title">
+      평생 하는 투자, 블록을 더해<br>
+      <span class="highlight">'이기는 게임'</span>을 하세요
+    </h2>
+    <!-- [수정 포인트] 아이콘 이미지 URL 교체 -->
+    <ul class="bc-ql__list">
+      <li><a class="bc-ql__link" href="/free">
+        <span class="bc-ql__icon-wrap">
+          <img src="https://d118wd34u6nbvx.cloudfront.net/mallId-41/57260259-b1d0-4eed-b8fa-e3ac510b5f36-1772519997423.webp" alt="무료특강" style="width: 44px; height: 44px; object-fit: contain;" />
+        </span>
+        <span class="bc-ql__label">무료특강</span>
+      </a></li>
+      <li><a class="bc-ql__link" href="/Lecture">
+        <span class="bc-ql__icon-wrap">
+          <img src="https://d118wd34u6nbvx.cloudfront.net/mallId-41/9e22f95f-c281-46a8-b12b-ec022f76573d-1772519997418.webp" alt="정규강의" style="width: 44px; height: 44px; object-fit: contain;" />
+        </span>
+        <span class="bc-ql__label">정규강의</span>
+      </a></li>
+      <li><a class="bc-ql__link" href="/teachers">
+        <span class="bc-ql__icon-wrap">
+          <img src="https://d118wd34u6nbvx.cloudfront.net/mallId-41/04bce3c4-1d05-4e53-b8ee-ea2a83995252-1772519997425.webp" alt="강사소개" style="width: 44px; height: 44px; object-fit: contain;" />
+        </span>
+        <span class="bc-ql__label">강사소개</span>
+      </a></li>
+      <li><a class="bc-ql__link" href="javascript:void(0)">
+        <span class="bc-ql__icon-wrap">
+          <img src="https://d118wd34u6nbvx.cloudfront.net/mallId-41/49e52e3a-095e-4acb-b386-efad7f100808-1772519997424.webp" alt="고객센터" style="width: 44px; height: 44px; object-fit: contain;" />
+        </span>
+        <span class="bc-ql__label">고객센터</span>
+      </a></li>
+      <li><a class="bc-ql__link" href="https://cafe.naver.com/blockcampus" target="_blank" rel="noopener noreferrer">
+        <span class="bc-ql__icon-wrap">
+          <img src="https://d118wd34u6nbvx.cloudfront.net/mallId-41/e7e0a499-194d-480e-b7ba-60983fb609b5-1772519997424.webp" alt="블캠카페" style="width: 44px; height: 44px; object-fit: contain;" />
+        </span>
+        <span class="bc-ql__label">블캠카페</span>
+      </a></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  섹션 03: BEST 무료특강
+  수정 포인트: 썸네일 URL, 강의명, 강사명, 날짜
+============================================================ -->
+
+<style>
+  .bc-free { background-color: var(--bc-bg-white); padding: var(--bc-section-padding); font-family: var(--bc-font); }
+  .bc-free__inner { max-width: var(--bc-max-width); margin: 0 auto; padding: 0 24px; }
+  .bc-free__header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+  .bc-free__icon { width: 28px; height: 28px; background-color: var(--bc-primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .bc-free__heading { font-size: 24px; font-weight: 800; color: var(--bc-text-title); margin: 0; line-height: 1.2; }
+  .bc-free__subheading { font-size: 14px; color: var(--bc-text-sub); margin: 0; }
+  .bc-free__cards { display: flex; gap: 20px; flex-wrap: wrap; }
+  .bc-free-card { background: var(--bc-bg-white); border-radius: var(--bc-card-radius); box-shadow: var(--bc-card-shadow); overflow: hidden; width: 560px; flex-shrink: 0; cursor: pointer; transition: box-shadow 0.2s ease; }
+  .bc-free-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.14); }
+  .bc-free-card__thumb-wrap { position: relative; width: 100%; aspect-ratio: 16/10; overflow: hidden; border-radius: var(--bc-card-radius) var(--bc-card-radius) 0 0; }
+  .bc-free-card__thumb { position: absolute; inset: 0; background-image: url('https://d118wd34u6nbvx.cloudfront.net/mallId-41/ce6e5231-5fc6-4129-b3be-c3f63dcb6c58-1773036269281.webp'); background-size: cover; background-position: center; }
+  /* 오버레이 불필요 — 이미지 자체에 텍스트 베이크됨. 원본과 동일하게 이미지만 표시 */
+  .bc-free-card__body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 5px; }
+  .bc-free-card__title-row { display: flex; align-items: flex-start; gap: 8px; }
+  .bc-free-card__avatar { width: 28px; height: 28px; background: #d0d0d0; border-radius: 50%; flex-shrink: 0; }
+  .bc-free-card__title { font-size: 13px; font-weight: 600; color: var(--bc-text-title); line-height: 1.5; margin: 0; }
+  .bc-free-card__instructor { font-size: 12px; color: var(--bc-text-body); margin: 0; }
+  .bc-free-card__meta { font-size: 12px; color: var(--bc-text-sub); margin: 0; }
+  .bc-free-card__price { font-size: 14px; font-weight: 700; margin: 2px 0 0; }
+  .bc-free-card__price-free { color: var(--bc-primary); }
+  @media (max-width: 768px) {
+    .bc-free__cards { flex-direction: column; }
+    .bc-free-card { width: 100%; }
+    .bc-free__heading { font-size: 20px; }
+    .bc-free-card__overlay-title { font-size: 14px; }
+  }
+</style>
+
+<section class="bc-free">
+  <div class="bc-free__inner">
+    <div class="bc-free__header">
+      <div class="bc-free__icon">🎁</div>
+      <div>
+        <h2 class="bc-free__heading">BEST 무료특강</h2>
+        <p class="bc-free__subheading">0원으로 시작하는 계좌 우상향</p>
+      </div>
+    </div>
+    <div class="bc-free__cards">
+      <div class="bc-free-card">
+        <!-- 썸네일: 이미지에 텍스트가 이미 포함되어 있으므로 오버레이 없이 표시 -->
+        <div class="bc-free-card__thumb-wrap">
+          <div class="bc-free-card__thumb"></div>
+        </div>
+        <div class="bc-free-card__body">
+          <div class="bc-free-card__title-row">
+            <div class="bc-free-card__avatar"></div>
+            <p class="bc-free-card__title">[무료] 2년만에 포르쉐 3대 계약한 MDS 단타 매매법 (3/25, 수, 저녁 8시)</p>
+          </div>
+          <p class="bc-free-card__instructor">퍼거슨 강사 ★ 0 (0)</p>
+          <p class="bc-free-card__meta">총 0시간 0분 | 1개의 강의</p>
+          <p class="bc-free-card__price"><span class="bc-free-card__price-free">무료</span> 클래스</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  섹션 04: 무료특강 캘린더 (풀기능 버전)
+  기본: 04b (풀기능). 간소화 버전(04a)은 sections/04a-calendar-simple.html 참조
+  수정 포인트: calendarEvents 배열, 부제 텍스트, 일정 클릭 URL
+============================================================ -->
+
+<style>
+  .bc-calendar-full { background-color: var(--bc-bg-white); padding: var(--bc-section-padding); font-family: var(--bc-font); }
+  .bc-cal-f__inner { max-width: var(--bc-max-width); margin: 0 auto; padding: 0 24px; }
+  .bc-cal-f__header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bc-cal-f__icon { width: 6px; height: 24px; background-color: var(--bc-primary); border-radius: 2px; flex-shrink: 0; }
+  .bc-cal-f__title { font-size: 24px; font-weight: 800; color: var(--bc-text-title); margin: 0; }
+  .bc-cal-f__sub { font-size: 14px; color: var(--bc-text-sub); margin: 0 0 32px 16px; }
+  .bc-cal-f__body { display: flex; gap: 24px; align-items: flex-start; }
+  .bc-cal-f__left { flex: 0 0 40%; border: 1px solid #e5e5e5; border-radius: var(--bc-card-radius); padding: 24px; box-sizing: border-box; }
+  .bc-cal-f__right { flex: 0 0 calc(60% - 24px); border: 1px solid #e5e5e5; border-radius: var(--bc-card-radius); padding: 24px; box-sizing: border-box; min-height: 320px; }
+  .bc-cal-f__nav { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 20px; }
+  .bc-cal-f__nav-btn { background: none; border: 1px solid #e5e5e5; border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: var(--bc-text-body); transition: background-color 0.15s ease; }
+  .bc-cal-f__nav-btn:hover { background-color: var(--bc-bg-gray); }
+  .bc-cal-f__month-label { font-size: 16px; font-weight: 700; color: var(--bc-text-title); min-width: 100px; text-align: center; }
+  .bc-cal-f__table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .bc-cal-f__table th { font-size: 12px; font-weight: 600; color: var(--bc-text-sub); text-align: center; padding-bottom: 12px; }
+  .bc-cal-f__table th:first-child { color: #e74c3c; }
+  .bc-cal-f__table th:last-child { color: var(--bc-primary); }
+  .bc-cal-f__table td { text-align: center; padding: 0; vertical-align: top; }
+  .bc-cal-f__day { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; font-size: 14px; font-weight: 500; color: var(--bc-text-title); cursor: pointer; position: relative; transition: background-color 0.15s ease; user-select: none; }
+  .bc-cal-f__day:hover { background-color: #f0f4ff; }
+  .bc-cal-f__day--today { background-color: var(--bc-primary); color: #fff; }
+  .bc-cal-f__day--today:hover { background-color: #1e52d4; }
+  .bc-cal-f__day--selected { background-color: var(--bc-primary); color: #fff; }
+  .bc-cal-f__dot { position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background-color: var(--bc-primary); }
+  .bc-cal-f__day--today .bc-cal-f__dot, .bc-cal-f__day--selected .bc-cal-f__dot { background-color: #fff; }
+  .bc-cal-f__day--other { color: #d0d0d0; cursor: default; }
+  .bc-cal-f__day--other:hover { background-color: transparent; }
+  .bc-cal-f__day--sun { color: #e74c3c; }
+  .bc-cal-f__day--sat { color: var(--bc-primary); }
+  .bc-cal-f__day--today.bc-cal-f__day--sun, .bc-cal-f__day--today.bc-cal-f__day--sat,
+  .bc-cal-f__day--selected.bc-cal-f__day--sun, .bc-cal-f__day--selected.bc-cal-f__day--sat { color: #fff; }
+  .bc-cal-f__date-display { margin-bottom: 20px; }
+  .bc-cal-f__date-ym { font-size: 14px; color: var(--bc-text-sub); margin-bottom: 4px; }
+  .bc-cal-f__date-day { font-size: 32px; font-weight: 800; color: var(--bc-primary); }
+  .bc-cal-f__date-weekday { font-size: 16px; font-weight: 500; color: var(--bc-primary); }
+  .bc-cal-f__event-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .bc-cal-f__event-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: var(--bc-bg-gray); border-radius: 8px; cursor: pointer; transition: background-color 0.15s ease; }
+  .bc-cal-f__event-item:hover { background-color: #e8ecf4; }
+  .bc-cal-f__event-badge { display: inline-block; background-color: var(--bc-primary); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 4px; margin-bottom: 6px; }
+  .bc-cal-f__event-title { font-size: 14px; font-weight: 600; color: var(--bc-text-title); line-height: 1.5; }
+  .bc-cal-f__event-arrow { font-size: 18px; color: var(--bc-text-sub); flex-shrink: 0; margin-left: 12px; }
+  .bc-cal-f__no-event { text-align: center; padding: 40px 0; color: var(--bc-text-sub); font-size: 14px; }
+  @media (max-width: 768px) {
+    .bc-cal-f__body { flex-direction: column; }
+    .bc-cal-f__left, .bc-cal-f__right { flex: 1 1 100%; }
+    .bc-cal-f__title { font-size: 20px; }
+    .bc-cal-f__day { width: 36px; height: 36px; font-size: 13px; }
+    .bc-cal-f__date-day { font-size: 26px; }
+    .bc-cal-f__right { min-height: auto; }
+  }
+</style>
+
+<section class="bc-calendar-full">
+  <div class="bc-cal-f__inner">
+    <div class="bc-cal-f__header">
+      <span class="bc-cal-f__icon"></span>
+      <h2 class="bc-cal-f__title">무료특강 일정</h2>
+    </div>
+    <p class="bc-cal-f__sub">놓치지 않게 미리 저장 필수!</p>
+    <div class="bc-cal-f__body">
+      <div class="bc-cal-f__left">
+        <div class="bc-cal-f__nav">
+          <button class="bc-cal-f__nav-btn" id="calFullPrev" aria-label="이전 월">&#8249;</button>
+          <span class="bc-cal-f__month-label" id="calFullMonth"></span>
+          <button class="bc-cal-f__nav-btn" id="calFullNext" aria-label="다음 월">&#8250;</button>
+        </div>
+        <table class="bc-cal-f__table">
+          <thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead>
+          <tbody id="calFullBody"></tbody>
+        </table>
+      </div>
+      <div class="bc-cal-f__right">
+        <div class="bc-cal-f__date-display" id="calFullDateDisplay"></div>
+        <div id="calFullEvents"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  섹션 05: 정규강의 (마감 임박)
+  수정 포인트: 강의명, 강사명, 가격, 썸네일 이미지
+============================================================ -->
+
+<style>
+  .bc-reg { background-color: var(--bc-bg-white); padding: var(--bc-section-padding); font-family: var(--bc-font); }
+  .bc-reg__inner { max-width: var(--bc-max-width); margin: 0 auto; padding: 0 24px; }
+  .bc-reg__header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+  .bc-reg__icon { width: 28px; height: 28px; background-color: var(--bc-primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .bc-reg__heading { font-size: 24px; font-weight: 800; color: var(--bc-text-title); margin: 0; }
+  .bc-reg__subheading { font-size: 14px; color: var(--bc-text-sub); margin: 0; }
+  .bc-reg__cards { display: flex; gap: 20px; flex-wrap: wrap; }
+  .bc-reg-card { background: var(--bc-bg-white); border-radius: var(--bc-card-radius); box-shadow: var(--bc-card-shadow); overflow: hidden; width: 560px; max-width: 100%; cursor: pointer; transition: box-shadow 0.2s ease; }
+  .bc-reg-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.14); }
+  .bc-reg-card__thumb-wrap { position: relative; width: 100%; aspect-ratio: 16/10; overflow: hidden; border-radius: var(--bc-card-radius) var(--bc-card-radius) 0 0; }
+  .bc-reg-card__thumb { position: absolute; inset: 0; background-color: #f0f0f0; }
+  .bc-reg-card__body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 5px; }
+  .bc-reg-card__title-row { display: flex; align-items: flex-start; gap: 8px; }
+  .bc-reg-card__avatar { width: 28px; height: 28px; background: #d0d0d0; border-radius: 50%; flex-shrink: 0; }
+  .bc-reg-card__title { font-size: 13px; font-weight: 600; color: var(--bc-text-title); line-height: 1.5; margin: 0; }
+  .bc-reg-card__instructor { font-size: 12px; color: var(--bc-text-body); margin: 0; }
+  .bc-reg-card__meta { font-size: 12px; color: var(--bc-text-sub); margin: 0; }
+  .bc-reg-card__price { font-size: 15px; font-weight: 700; color: var(--bc-text-title); margin: 4px 0 0; }
+  @media (max-width: 768px) {
+    .bc-reg__cards { flex-direction: column; }
+    .bc-reg-card { width: 100%; min-width: unset; }
+    .bc-reg__heading { font-size: 20px; }
+  }
+</style>
+
+<section class="bc-reg">
+  <div class="bc-reg__inner">
+    <div class="bc-reg__header">
+      <div class="bc-reg__icon">📌</div>
+      <div>
+        <h2 class="bc-reg__heading">정규강의(마감 임박)</h2>
+        <p class="bc-reg__subheading">절대 다시 안 올 마지막 기회!!</p>
+      </div>
+    </div>
+    <div class="bc-reg__cards">
+      <div class="bc-reg-card">
+        <div class="bc-reg-card__thumb-wrap">
+          <div class="bc-reg-card__thumb"></div>
+        </div>
+        <div class="bc-reg-card__body">
+          <div class="bc-reg-card__title-row">
+            <div class="bc-reg-card__avatar"></div>
+            <p class="bc-reg-card__title">정규강의 신청 대기중</p>
+          </div>
+          <p class="bc-reg-card__instructor">퍼거슨 강사 ★ 0 (0)</p>
+          <p class="bc-reg-card__meta">총 0시간 0분 | 0개의 강의</p>
+          <p class="bc-reg-card__price">0원</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  섹션 06: 수강생 혜택
+  수정 포인트: 브랜드명, 카드 제목/강조/본문, 아이콘 SVG
+============================================================ -->
+
+<style>
+  .bc-benefits { background-color: var(--bc-bg-gray); padding: 80px 20px; font-family: var(--bc-font); }
+  .bc-benefits__header { text-align: center; margin-bottom: 48px; }
+  .bc-benefits__eyebrow { display: block; font-size: 16px; color: var(--bc-primary); font-weight: 500; margin-bottom: 10px; }
+  .bc-benefits__title { font-size: 32px; font-weight: 800; color: var(--bc-text-title); margin: 0; line-height: 1.3; }
+  .bc-benefits__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: var(--bc-max-width); margin: 0 auto; }
+  .bc-benefits__card { background: var(--bc-bg-white); border-radius: var(--bc-card-radius); box-shadow: var(--bc-card-shadow); padding: 32px; text-align: left; }
+  .bc-benefits__icon-wrap { width: 48px; height: 48px; border-radius: 50%; background-color: #e8f0ff; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+  .bc-benefits__icon-wrap svg { width: 24px; height: 24px; }
+  .bc-benefits__card-title { font-size: 20px; font-weight: 700; color: var(--bc-text-title); margin: 0 0 12px; line-height: 1.4; }
+  .bc-benefits__card-highlight { font-size: 14px; color: var(--bc-primary); font-weight: 600; line-height: 1.6; margin: 0 0 10px; white-space: pre-line; }
+  .bc-benefits__card-body { font-size: 14px; color: var(--bc-text-body); line-height: 1.7; margin: 0; }
+  @media (max-width: 900px) { .bc-benefits__grid { grid-template-columns: repeat(2, 1fr); } .bc-benefits__title { font-size: 26px; } }
+  @media (max-width: 560px) { .bc-benefits { padding: 60px 16px; } .bc-benefits__grid { grid-template-columns: 1fr; } .bc-benefits__title { font-size: 22px; } }
+</style>
+
+<section class="bc-benefits">
+  <div class="bc-benefits__header">
+    <span class="bc-benefits__eyebrow">'블록캠퍼스 수강생은'</span>
+    <h2 class="bc-benefits__title">매일 수익이 쏟아지는 이유</h2>
+  </div>
+  <div class="bc-benefits__grid">
+    <div class="bc-benefits__card">
+      <div class="bc-benefits__icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="10" cy="7" r="3.5" stroke="#2a64f6" stroke-width="1.8"/><path d="M3 19c0-3.314 3.134-6 7-6" stroke="#2a64f6" stroke-width="1.8" stroke-linecap="round"/><path d="M15 14l2 2 4-4" stroke="#2a64f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="bc-benefits__card-title">상위 1% 검증된 소수정예 강사</h3>
+      <p class="bc-benefits__card-highlight">N가지 엄격한 기준으로&#10;사전 미팅을 진행</p>
+      <p class="bc-benefits__card-body">실력이 입증되지 않다면 절대 섭외하지 않습니다.</p>
+    </div>
+    <div class="bc-benefits__card">
+      <div class="bc-benefits__icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none"><polyline points="3,17 8,11 12,14 17,7 21,10" stroke="#2a64f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17,7 21,7 21,11" stroke="#2a64f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="bc-benefits__card-title">현재도 시장에서 먹히는 극최신 매매법</h3>
+      <p class="bc-benefits__card-highlight">과거에만 쓸 수 있는 방법은&#10;쓸모없는 죽은 이론일 뿐</p>
+      <p class="bc-benefits__card-body">오늘 배워서, 오늘 바로 적용하는 방법만 알증해서 알려드립니다.</p>
+    </div>
+    <div class="bc-benefits__card">
+      <div class="bc-benefits__icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="#2a64f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="#2a64f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3 class="bc-benefits__card-title">남김없이 모두 포함하는 올인원 기획</h3>
+      <p class="bc-benefits__card-highlight">한 강의로 다 끝내도록&#10;영끌해서 교육을 구성</p>
+      <p class="bc-benefits__card-body">수강생이 성공할 수 있게 전폭적으로 지원합니다.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  섹션 07: 네이버 카페 배너
+  수정 포인트: 카피 텍스트, 카페 URL, 버튼 텍스트/색상
+============================================================ -->
+
+<style>
+  .bc-cafe-banner { background-color: var(--bc-bg-gray); padding: var(--bc-section-padding); font-family: var(--bc-font); }
+  .bc-cafe-banner__inner { max-width: var(--bc-max-width); margin: 0 auto; padding: 0 24px; }
+  .bc-cb__card { background: var(--bc-bg-white); border-radius: var(--bc-card-radius); box-shadow: var(--bc-card-shadow); padding: 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .bc-cb__text { display: flex; flex-direction: column; gap: 8px; }
+  .bc-cb__sub { font-size: 16px; color: var(--bc-text-sub); line-height: 1.5; }
+  .bc-cb__title { font-size: 24px; font-weight: 700; color: var(--bc-text-title); line-height: 1.4; margin: 0; }
+  .bc-cb__title .highlight { color: var(--bc-primary); }
+  .bc-cb__btn { display: inline-flex; align-items: center; gap: 6px; background-color: var(--bc-naver); color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; padding: 14px 28px; border-radius: 8px; white-space: nowrap; flex-shrink: 0; transition: opacity 0.2s ease, transform 0.15s ease; }
+  .bc-cb__btn:hover { opacity: 0.88; transform: translateY(-2px); }
+  .bc-cb__btn-n { font-size: 20px; font-weight: 800; line-height: 1; }
+  @media (max-width: 768px) {
+    .bc-cb__card { flex-direction: column; align-items: flex-start; padding: 28px 20px; gap: 20px; }
+    .bc-cb__sub { font-size: 14px; }
+    .bc-cb__title { font-size: 18px; }
+    .bc-cb__btn { width: 100%; justify-content: center; padding: 14px 0; }
+  }
+</style>
+
+<section class="bc-cafe-banner">
+  <div class="bc-cafe-banner__inner">
+    <div class="bc-cb__card">
+      <div class="bc-cb__text">
+        <p class="bc-cb__sub">지금 당장 무료로 확인하세요!</p>
+        <h3 class="bc-cb__title">상위 1%만 아는 <span class="highlight">투자 노하우</span></h3>
+      </div>
+      <a class="bc-cb__btn" href="https://cafe.naver.com/blockcampus" target="_blank" rel="noopener noreferrer">
+        <span class="bc-cb__btn-n">N</span>
+        블캠 카페 바로가기 &gt;
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+  섹션 08: 하단 고정바
+  수정 포인트: targetDate(JS), 좌측 문구, CTA 버튼 링크
+============================================================ -->
+
+<style>
+  .bc-sticky-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 56px; z-index: 9999; display: flex; font-family: var(--bc-font); box-shadow: 0 -2px 12px rgba(0,0,0,0.18); }
+  .bc-sticky-bar__left { background: linear-gradient(90deg, #c0392b 0%, #8b1a1a 100%); flex: 0 0 40%; display: flex; align-items: center; justify-content: center; padding: 0 16px; }
+  .bc-sticky-bar__left-text { color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .bc-sticky-bar__right { background-color: #2d2d2d; flex: 0 0 60%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 16px; }
+  .bc-sticky-bar__dday { color: #fff; font-size: 15px; font-weight: 700; white-space: nowrap; }
+  .bc-sticky-bar__divider { color: #666; font-size: 14px; }
+  .bc-sticky-bar__countdown { font-family: 'Courier New', monospace; color: var(--bc-cta); font-size: 15px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
+  .bc-sticky-bar__cta { background-color: var(--bc-cta); color: #1a1a1a; font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; transition: opacity 0.15s ease; font-family: inherit; }
+  .bc-sticky-bar__cta:hover { opacity: 0.88; }
+  @media (max-width: 600px) {
+    .bc-sticky-bar__left { flex: 0 0 0%; padding: 0; overflow: hidden; }
+    .bc-sticky-bar__left-text { display: none; }
+    .bc-sticky-bar__right { flex: 0 0 100%; gap: 8px; padding: 0 12px; }
+    .bc-sticky-bar__dday { font-size: 13px; }
+    .bc-sticky-bar__countdown { font-size: 13px; }
+    .bc-sticky-bar__cta { font-size: 13px; padding: 9px 16px; }
+  }
+  @media (max-width: 380px) {
+    .bc-sticky-bar__divider, .bc-sticky-bar__dday { display: none; }
+  }
+</style>
+
+<div class="bc-sticky-bar">
+  <div class="bc-sticky-bar__left">
+    <span class="bc-sticky-bar__left-text">선착순 인원이 곧 마감됩니다.</span>
+  </div>
+  <div class="bc-sticky-bar__right">
+    <span class="bc-sticky-bar__dday" id="bc-dday">D-2</span>
+    <span class="bc-sticky-bar__divider">|</span>
+    <span class="bc-sticky-bar__countdown" id="bc-countdown">00:00:00</span>
+    <button class="bc-sticky-bar__cta" onclick="void(0)">바로 신청하기</button>
+  </div>
+</div>
+
+
+<!-- ============================================================
+  JavaScript: 캘린더 + 카운트다운
+============================================================ -->
+<script>
+/* ── 캘린더 (풀기능) ── */
+(function() {
+  // [수정 포인트] 일정 데이터
+  const calendarEvents = [
+    {
+      date: '2026-03-25',
+      title: '[퍼거슨][무료] 2년만에 포르쉐 3대 계약한 MDS 단타 매매법(3/25, 수, 저녁 8시)',
+      instructor: '퍼거슨',
+      time: '저녁 8시',
+      type: '무료특강'
+    }
+  ];
+
+  const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+  const now = new Date();
+  const todayYear = now.getFullYear();
+  const todayMonth = now.getMonth() + 1;
+  const todayDate = now.getDate();
+  const todayStr = todayYear + '-' + String(todayMonth).padStart(2,'0') + '-' + String(todayDate).padStart(2,'0');
+  const eventDates = new Set(calendarEvents.map(function(e) { return e.date; }));
+
+  var currentYear = todayYear;
+  var currentMonth = todayMonth;
+  var selectedYear = todayYear;
+  var selectedMonth = todayMonth;
+  var selectedDay = todayDate;
+
+  var monthLabel = document.getElementById('calFullMonth');
+  var tbody = document.getElementById('calFullBody');
+  var prevBtn = document.getElementById('calFullPrev');
+  var nextBtn = document.getElementById('calFullNext');
+
+  function renderCalendar(year, month) {
+    currentYear = year;
+    currentMonth = month;
+    monthLabel.textContent = year + '. ' + String(month).padStart(2,'0');
+    tbody.innerHTML = '';
+
+    var firstDay = new Date(year, month - 1, 1).getDay();
+    var lastDate = new Date(year, month, 0).getDate();
+    var prevLastDate = new Date(year, month - 1, 0).getDate();
+    var cells = [];
+
+    for (var i = firstDay - 1; i >= 0; i--) {
+      cells.push({ day: prevLastDate - i, current: false });
+    }
+    for (var d = 1; d <= lastDate; d++) {
+      cells.push({ day: d, current: true });
+    }
+    var totalCells = cells.length <= 35 ? 35 : 42;
+    var remaining = totalCells - cells.length;
+    for (var d = 1; d <= remaining; d++) {
+      cells.push({ day: d, current: false });
+    }
+
+    var totalRows = cells.length / 7;
+    for (var row = 0; row < totalRows; row++) {
+      var tr = document.createElement('tr');
+      for (var col = 0; col < 7; col++) {
+        var cell = cells[row * 7 + col];
+        var td = document.createElement('td');
+        var span = document.createElement('span');
+        span.className = 'bc-cal-f__day';
+        span.textContent = cell.day;
+
+        if (!cell.current) {
+          span.classList.add('bc-cal-f__day--other');
+        } else {
+          var dateStr = year + '-' + String(month).padStart(2,'0') + '-' + String(cell.day).padStart(2,'0');
+          if (col === 0) span.classList.add('bc-cal-f__day--sun');
+          if (col === 6) span.classList.add('bc-cal-f__day--sat');
+          if (dateStr === todayStr) span.classList.add('bc-cal-f__day--today');
+          if (year === selectedYear && month === selectedMonth && cell.day === selectedDay) span.classList.add('bc-cal-f__day--selected');
+          if (eventDates.has(dateStr)) {
+            var dot = document.createElement('span');
+            dot.className = 'bc-cal-f__dot';
+            span.appendChild(dot);
+          }
+          (function(dy) {
+            span.addEventListener('click', function() {
+              selectedYear = year; selectedMonth = month; selectedDay = dy;
+              renderCalendar(currentYear, currentMonth);
+              updateRightPanel();
+            });
+          })(cell.day);
+        }
+        td.appendChild(span);
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  }
+
+  function updateRightPanel() {
+    var dateStr = selectedYear + '-' + String(selectedMonth).padStart(2,'0') + '-' + String(selectedDay).padStart(2,'0');
+    var dateObj = new Date(selectedYear, selectedMonth - 1, selectedDay);
+    var wdName = weekdays[dateObj.getDay()];
+
+    document.getElementById('calFullDateDisplay').innerHTML =
+      '<div class="bc-cal-f__date-ym">' + selectedYear + '-' + String(selectedMonth).padStart(2,'0') + '</div>' +
+      '<div><span class="bc-cal-f__date-day">' + String(selectedDay).padStart(2,'0') + '</span>' +
+      '<span class="bc-cal-f__date-weekday">(' + wdName + ')</span></div>';
+
+    var dayEvents = calendarEvents.filter(function(e) { return e.date === dateStr; });
+    var container = document.getElementById('calFullEvents');
+
+    if (dayEvents.length === 0) {
+      container.innerHTML = '<div class="bc-cal-f__no-event">등록된 일정이 없습니다.</div>';
+      return;
+    }
+
+    var html = '<ul class="bc-cal-f__event-list">';
+    dayEvents.forEach(function(ev) {
+      html += '<li class="bc-cal-f__event-item"><div><div class="bc-cal-f__event-badge">' + ev.type + '</div><div class="bc-cal-f__event-title">' + ev.title + '</div></div><span class="bc-cal-f__event-arrow">&#8250;</span></li>';
+    });
+    html += '</ul>';
+    container.innerHTML = html;
+  }
+
+  prevBtn.addEventListener('click', function() {
+    var m = currentMonth - 1, y = currentYear;
+    if (m < 1) { m = 12; y--; }
+    renderCalendar(y, m);
+  });
+  nextBtn.addEventListener('click', function() {
+    var m = currentMonth + 1, y = currentYear;
+    if (m > 12) { m = 1; y++; }
+    renderCalendar(y, m);
+  });
+
+  renderCalendar(currentYear, currentMonth);
+  updateRightPanel();
+})();
+
+/* ── 카운트다운 ── */
+(function() {
+  // [수정 포인트] targetDate를 무료특강 일시로 변경
+  var targetDate = new Date('2026-03-25T20:00:00+09:00');
+
+  function updateCountdown() {
+    var now = new Date();
+    var diff = targetDate - now;
+    if (diff <= 0) {
+      document.getElementById('bc-countdown').textContent = '마감';
+      document.getElementById('bc-dday').textContent = 'D-0';
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+    var m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    var s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+    document.getElementById('bc-dday').textContent = 'D-' + d;
+    document.getElementById('bc-countdown').textContent = h + ':' + m + ':' + s;
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+})();
+</script>
+
+</body>
+</html>
