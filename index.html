@@ -36,8 +36,6 @@
       color: var(--bc-text-title);
       background: var(--bc-bg-white);
       -webkit-font-smoothing: antialiased;
-      /* 하단 고정바 높이만큼 여백 */
-      padding-bottom: 56px;
     }
     a { color: inherit; }
     img { max-width: 100%; display: block; }
@@ -537,45 +535,6 @@
 </section>
 
 
-<!-- ============================================================
-  섹션 08: 하단 고정바
-  수정 포인트: targetDate(JS), 좌측 문구, CTA 버튼 링크
-============================================================ -->
-
-<style>
-  .bc-sticky-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 56px; z-index: 9999; display: flex; font-family: var(--bc-font); box-shadow: 0 -2px 12px rgba(0,0,0,0.18); }
-  .bc-sticky-bar__left { background: linear-gradient(90deg, #c0392b 0%, #8b1a1a 100%); flex: 0 0 40%; display: flex; align-items: center; justify-content: center; padding: 0 16px; }
-  .bc-sticky-bar__left-text { color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; }
-  .bc-sticky-bar__right { background-color: #2d2d2d; flex: 0 0 60%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 16px; }
-  .bc-sticky-bar__dday { color: #fff; font-size: 15px; font-weight: 700; white-space: nowrap; }
-  .bc-sticky-bar__divider { color: #666; font-size: 14px; }
-  .bc-sticky-bar__countdown { font-family: 'Courier New', monospace; color: var(--bc-cta); font-size: 15px; font-weight: 700; letter-spacing: 1px; white-space: nowrap; }
-  .bc-sticky-bar__cta { background-color: var(--bc-cta); color: #1a1a1a; font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; transition: opacity 0.15s ease; font-family: inherit; }
-  .bc-sticky-bar__cta:hover { opacity: 0.88; }
-  @media (max-width: 600px) {
-    .bc-sticky-bar__left { flex: 0 0 0%; padding: 0; overflow: hidden; }
-    .bc-sticky-bar__left-text { display: none; }
-    .bc-sticky-bar__right { flex: 0 0 100%; gap: 8px; padding: 0 12px; }
-    .bc-sticky-bar__dday { font-size: 13px; }
-    .bc-sticky-bar__countdown { font-size: 13px; }
-    .bc-sticky-bar__cta { font-size: 13px; padding: 9px 16px; }
-  }
-  @media (max-width: 380px) {
-    .bc-sticky-bar__divider, .bc-sticky-bar__dday { display: none; }
-  }
-</style>
-
-<div class="bc-sticky-bar">
-  <div class="bc-sticky-bar__left">
-    <span class="bc-sticky-bar__left-text">선착순 인원이 곧 마감됩니다.</span>
-  </div>
-  <div class="bc-sticky-bar__right">
-    <span class="bc-sticky-bar__dday" id="bc-dday">D-2</span>
-    <span class="bc-sticky-bar__divider">|</span>
-    <span class="bc-sticky-bar__countdown" id="bc-countdown">00:00:00</span>
-    <button class="bc-sticky-bar__cta" onclick="void(0)">바로 신청하기</button>
-  </div>
-</div>
 
 
 <!-- ============================================================
@@ -716,30 +675,6 @@
   updateRightPanel();
 })();
 
-/* ── 카운트다운 ── */
-(function() {
-  // [수정 포인트] targetDate를 무료특강 일시로 변경
-  var targetDate = new Date('2026-03-25T20:00:00+09:00');
-
-  function updateCountdown() {
-    var now = new Date();
-    var diff = targetDate - now;
-    if (diff <= 0) {
-      document.getElementById('bc-countdown').textContent = '마감';
-      document.getElementById('bc-dday').textContent = 'D-0';
-      return;
-    }
-    var d = Math.floor(diff / 86400000);
-    var h = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-    var m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-    var s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-    document.getElementById('bc-dday').textContent = 'D-' + d;
-    document.getElementById('bc-countdown').textContent = h + ':' + m + ':' + s;
-  }
-
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
-})();
 </script>
 
 </body>
