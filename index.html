@@ -643,5 +643,21 @@
 
 </script>
 
+<script>
+/* ── iframe 높이 자동 전달 ── */
+(function() {
+  var lastHeight = 0;
+  function sendHeight() {
+    var h = document.documentElement.scrollHeight;
+    if (h !== lastHeight) {
+      lastHeight = h;
+      window.parent.postMessage({ type: 'bc-resize', height: h }, '*');
+    }
+    requestAnimationFrame(sendHeight);
+  }
+  requestAnimationFrame(sendHeight);
+})();
+</script>
+
 </body>
 </html>
