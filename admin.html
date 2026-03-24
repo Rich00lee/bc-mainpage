@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>블록캠퍼스 설정 관리</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; min-height: 100vh; padding-bottom: 80px; }
+
+/* 헤더 */
+.header { background: #1a1a1a; color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; position: sticky; top: 0; z-index: 100; }
+.header h1 { font-size: 18px; font-weight: 700; white-space: nowrap; }
+.token-area { display: flex; align-items: center; gap: 8px; }
+.token-area input { padding: 6px 10px; border: 1px solid #555; border-radius: 4px; background: #2a2a2a; color: #fff; font-size: 13px; width: 220px; }
+.token-area button { padding: 6px 14px; border: none; border-radius: 4px; background: #2a64f6; color: #fff; font-size: 13px; cursor: pointer; white-space: nowrap; }
+.token-area button:hover { background: #1b4fd4; }
+.token-status { color: #4ade80; font-size: 13px; }
+
+/* 탭 */
+.tabs { display: flex; overflow-x: auto; background: #fff; border-bottom: 2px solid #e5e5e5; padding: 0 12px; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { height: 0; }
+.tab-btn { padding: 12px 16px; border: none; background: none; font-size: 14px; color: #888; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s; }
+.tab-btn.active { color: #2a64f6; border-bottom-color: #2a64f6; font-weight: 600; }
+.tab-btn:hover { color: #333; }
+
+/* 폼 */
+.form-container { max-width: 800px; margin: 20px auto; padding: 0 16px; }
+.section { display: none; }
+.section.active { display: block; }
+.field-group { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.field-group h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: #555; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 13px; font-weight: 500; color: #666; margin-bottom: 4px; }
+.field input[type="text"], .field input[type="password"], .field textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color .2s; }
+.field input:focus, .field textarea:focus { outline: none; border-color: #2a64f6; }
+.field textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+.field-inline { display: flex; align-items: center; gap: 8px; }
+.field-inline label { margin-bottom: 0; }
+.field .hint { font-size: 12px; color: #999; margin-top: 4px; }
+
+/* 캘린더 이벤트 카드 */
+.event-card { border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 12px; position: relative; }
+.event-card .event-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.event-card .event-header span { font-weight: 600; color: #555; font-size: 14px; }
+.btn-remove { padding: 4px 12px; border: 1px solid #f44; border-radius: 4px; background: #fff; color: #f44; font-size: 12px; cursor: pointer; }
+.btn-remove:hover { background: #f44; color: #fff; }
+.btn-add { display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px; border: 1px dashed #2a64f6; border-radius: 6px; background: #f8faff; color: #2a64f6; font-size: 13px; cursor: pointer; margin-top: 4px; }
+.btn-add:hover { background: #eef3ff; }
+
+/* 하단 저장 버튼 */
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e5e5e5; padding: 12px 20px; display: flex; justify-content: center; z-index: 100; }
+.btn-save { padding: 12px 48px; border: none; border-radius: 8px; background: #2a64f6; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .2s; }
+.btn-save:hover { background: #1b4fd4; }
+.btn-save:disabled { background: #aaa; cursor: not-allowed; }
+
+/* 토스트 */
+.toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 8px; color: #fff; font-size: 14px; z-index: 1000; opacity: 0; transform: translateY(-10px); transition: all .3s; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { background: #16a34a; }
+.toast.error { background: #dc2626; }
+
+/* 모바일 */
+@media (max-width: 600px) {
+  .header { padding: 12px 14px; }
+  .header h1 { font-size: 16px; }
+  .token-area input { width: 150px; }
+  .tab-btn { padding: 10px 12px; font-size: 13px; }
+  .form-container { padding: 0 10px; margin: 12px auto; }
+  .field-group { padding: 14px; }
+  .btn-save { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+  <h1>블록캠퍼스 설정 관리</h1>
+  <div class="token-area" id="tokenArea"></div>
+</div>
+
+<!-- 탭 -->
+<div class="tabs" id="tabs"></div>
+
+<!-- 폼 영역 -->
+<div class="form-container" id="formContainer"></div>
+
+<!-- 저장 버튼 -->
+<div class="save-bar">
+  <button class="btn-save" id="btnSave" disabled onclick="saveConfig()">저장</button>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<script>
+const REPO = 'Rich00lee/bc-mainpage';
+const CONFIG_PATH = 'config.json';
+const API_BASE = 'https://api.github.com';
+
+let configData = null;
+let configSha = null;
+
+// === 탭 정의 ===
+const TABS = [
+  { id: 'hero', label: '히어로' },
+  { id: 'quicklinks', label: '퀵링크' },
+  { id: 'bestFree', label: '무료특강' },
+  { id: 'calendar', label: '캘린더' },
+  { id: 'regularCourses', label: '정규강의' },
+  { id: 'benefits', label: '혜택' },
+  { id: 'cafeBanner', label: '카페배너' },
+  { id: 'floatingBar', label: '플로팅바' }
+];
+
+// === 유틸 ===
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function getToken() {
+  return localStorage.getItem('bc-admin-token') || '';
+}
+
+function setNestedValue(obj, path, value) {
+  const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+  let cur = obj;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const k = keys[i];
+    const nextKey = keys[i + 1];
+    if (cur[k] === undefined) {
+      cur[k] = /^\d+$/.test(nextKey) ? [] : {};
+    }
+    cur = cur[k];
+  }
+  cur[keys[keys.length - 1]] = value;
+}
+
+function getNestedValue(obj, path) {
+  const keys = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+  let cur = obj;
+  for (const k of keys) {
+    if (cur == null) return undefined;
+    cur = cur[k];
+  }
+  return cur;
+}
+
+// === 토큰 UI ===
+function renderTokenArea() {
+  const area = document.getElementById('tokenArea');
+  const token = getToken();
+  if (token) {
+    area.innerHTML = '<span class="token-status">토큰 설정됨</span><button onclick="clearToken()">변경</button>';
+  } else {
+    area.innerHTML = '<input type="password" id="tokenInput" placeholder="GitHub Personal Access Token"><button onclick="saveToken()">저장</button>';
+  }
+}
+
+function saveToken() {
+  const input = document.getElementById('tokenInput');
+  const val = input ? input.value.trim() : '';
+  if (!val) return;
+  localStorage.setItem('bc-admin-token', val);
+  renderTokenArea();
+  loadConfig();
+}
+
+function clearToken() {
+  localStorage.removeItem('bc-admin-token');
+  renderTokenArea();
+}
+
+// === GitHub API ===
+async function apiFetch(url, options = {}) {
+  const token = getToken();
+  if (!token) throw new Error('NO_TOKEN');
+  const headers = {
+    'Authorization': 'token ' + token,
+    'Accept': 'application/vnd.github.v3+json',
+    ...options.headers
+  };
+  const res = await fetch(API_BASE + url, { ...options, headers });
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('토큰이 만료되었습니다. 새 토큰을 입력하세요');
+  }
+  if (res.status === 429) {
+    throw new Error('잠시 후 다시 시도하세요');
+  }
+  return res;
+}
+
+async function loadConfig() {
+  try {
+    const res = await apiFetch('/repos/' + REPO + '/contents/' + CONFIG_PATH);
+    if (!res.ok) throw new Error('LOAD_FAIL');
+    const data = await res.json();
+    configSha = data.sha;
+    const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+    try {
+      configData = JSON.parse(decoded);
+    } catch (e) {
+      showToast('설정 파일이 손상되었습니다', 'error');
+      return;
+    }
+    renderAllSections();
+    document.getElementById('btnSave').disabled = false;
+    showToast('설정을 불러왔습니다', 'success');
+  } catch (e) {
+    if (e.message === 'NO_TOKEN') return;
+    showToast(e.message, 'error');
+  }
+}
+
+async function saveConfig() {
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+
+  try {
+    collectFormData();
+    const jsonStr = JSON.stringify(configData, null, 2) + '\n';
+    const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+
+    let res = await apiFetch('/repos/' + REPO + '/contents/' + CONFIG_PATH, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: 'chore: update config.json via admin',
+        content: encoded,
+        sha: configSha
+      })
+    });
+
+    // 409 SHA 충돌 → 1회 재시도
+    if (res.status === 409) {
+      const latest = await apiFetch('/repos/' + REPO + '/contents/' + CONFIG_PATH);
+      if (!latest.ok) throw new Error('새로고침 후 다시 시도하세요');
+      const latestData = await latest.json();
+      configSha = latestData.sha;
+
+      res = await apiFetch('/repos/' + REPO + '/contents/' + CONFIG_PATH, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: 'chore: update config.json via admin',
+          content: encoded,
+          sha: configSha
+        })
+      });
+      if (res.status === 409) throw new Error('새로고침 후 다시 시도하세요');
+    }
+
+    if (!res.ok) throw new Error('저장 실패: ' + res.status);
+
+    const result = await res.json();
+    configSha = result.content.sha;
+    showToast('저장 완료!', 'success');
+  } catch (e) {
+    showToast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '저장';
+  }
+}
+
+// === collectFormData ===
+function collectFormData() {
+  if (!configData) return;
+  document.querySelectorAll('[data-path]').forEach(el => {
+    const path = el.getAttribute('data-path');
+    const value = el.type === 'checkbox' ? el.checked : el.value;
+    setNestedValue(configData, path, value);
+  });
+}
+
+// === 폼 렌더링 ===
+function renderTabs() {
+  const container = document.getElementById('tabs');
+  container.innerHTML = TABS.map((t, i) =>
+    '<button class="tab-btn' + (i === 0 ? ' active' : '') + '" data-tab="' + t.id + '" onclick="switchTab(\'' + t.id + '\')">' + t.label + '</button>'
+  ).join('');
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + id));
+}
+
+function field(label, path, type, hint) {
+  const val = getNestedValue(configData, path);
+  if (type === 'checkbox') {
+    return '<div class="field"><div class="field-inline"><input type="checkbox" data-path="' + path + '"' + (val ? ' checked' : '') + '><label>' + label + '</label></div></div>';
+  }
+  if (type === 'textarea') {
+    return '<div class="field"><label>' + label + '</label><textarea data-path="' + path + '">' + escapeHtml(val) + '</textarea>' + (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
+  }
+  return '<div class="field"><label>' + label + '</label><input type="text" data-path="' + path + '" value="' + escapeHtml(val) + '">' + (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
+}
+
+function renderAllSections() {
+  const c = document.getElementById('formContainer');
+  c.innerHTML = TABS.map((t, i) =>
+    '<div class="section' + (i === 0 ? ' active' : '') + '" id="sec-' + t.id + '">' + renderSection(t.id) + '</div>'
+  ).join('');
+}
+
+function renderSection(id) {
+  switch (id) {
+    case 'hero': return renderHero();
+    case 'quicklinks': return renderQuicklinks();
+    case 'bestFree': return renderBestFree();
+    case 'calendar': return renderCalendar();
+    case 'regularCourses': return renderRegularCourses();
+    case 'benefits': return renderBenefits();
+    case 'cafeBanner': return renderCafeBanner();
+    case 'floatingBar': return renderFloatingBar();
+    default: return '';
+  }
+}
+
+function renderHero() {
+  return '<div class="field-group"><h3>히어로 이미지</h3>' +
+    field('이미지 URL', 'hero.image', 'text') +
+    field('Alt 텍스트', 'hero.alt', 'text') +
+    '</div>';
+}
+
+function renderQuicklinks() {
+  let html = '<div class="field-group"><h3>퀵링크 타이틀</h3>' +
+    field('타이틀 (HTML 가능)', 'quicklinks.title', 'textarea') +
+    '</div>';
+  const items = configData.quicklinks.items || [];
+  items.forEach((item, i) => {
+    html += '<div class="field-group"><h3>퀵링크 #' + (i + 1) + '</h3>' +
+      field('라벨', 'quicklinks.items[' + i + '].label', 'text') +
+      field('링크 (href)', 'quicklinks.items[' + i + '].href', 'text') +
+      field('아이콘 URL', 'quicklinks.items[' + i + '].icon', 'text') +
+      field('외부 링크 (external)', 'quicklinks.items[' + i + '].external', 'checkbox') +
+      '</div>';
+  });
+  return html;
+}
+
+function renderBestFree() {
+  return '<div class="field-group"><h3>BEST 무료특강</h3>' +
+    field('섹션 제목', 'bestFree.heading', 'text') +
+    field('썸네일 URL', 'bestFree.card.thumbnail', 'text') +
+    field('강의 제목', 'bestFree.card.title', 'text') +
+    field('강사명', 'bestFree.card.instructor', 'text') +
+    field('메타 정보', 'bestFree.card.meta', 'text') +
+    field('링크 (href)', 'bestFree.card.href', 'text') +
+    '</div>';
+}
+
+function renderCalendar() {
+  let html = '<div class="field-group"><h3>캘린더 설정</h3>' +
+    field('섹션 제목', 'calendar.title', 'text') +
+    '</div>';
+  const events = configData.calendar.events || [];
+  events.forEach((ev, i) => {
+    html += '<div class="field-group"><div class="event-card"><div class="event-header"><span>일정 #' + (i + 1) + '</span><button class="btn-remove" onclick="removeEvent(' + i + ')">삭제</button></div>' +
+      field('날짜', 'calendar.events[' + i + '].date', 'text') +
+      field('제목', 'calendar.events[' + i + '].title', 'text') +
+      field('강사명', 'calendar.events[' + i + '].instructor', 'text') +
+      field('시간', 'calendar.events[' + i + '].time', 'text') +
+      field('유형', 'calendar.events[' + i + '].type', 'text') +
+      '</div></div>';
+  });
+  html += '<button class="btn-add" onclick="addEvent()">+ 일정 추가</button>';
+  return html;
+}
+
+function addEvent() {
+  collectFormData();
+  if (!configData.calendar.events) configData.calendar.events = [];
+  configData.calendar.events.push({ date: '', title: '', instructor: '', time: '', type: '무료특강' });
+  rerenderSection('calendar');
+}
+
+function removeEvent(index) {
+  collectFormData();
+  configData.calendar.events.splice(index, 1);
+  rerenderSection('calendar');
+}
+
+function rerenderSection(id) {
+  const sec = document.getElementById('sec-' + id);
+  if (sec) sec.innerHTML = renderSection(id);
+  switchTab(id);
+}
+
+function renderRegularCourses() {
+  return '<div class="field-group"><h3>정규강의</h3>' +
+    field('섹션 제목', 'regularCourses.heading', 'text') +
+    field('썸네일 URL', 'regularCourses.card.thumbnail', 'text') +
+    field('강의 제목', 'regularCourses.card.title', 'text') +
+    field('강사명', 'regularCourses.card.instructor', 'text') +
+    field('메타 정보', 'regularCourses.card.meta', 'text') +
+    field('링크 (href)', 'regularCourses.card.href', 'text') +
+    '</div>';
+}
+
+function renderBenefits() {
+  let html = '';
+  const items = configData.benefits.items || [];
+  items.forEach((item, i) => {
+    html += '<div class="field-group"><h3>혜택 #' + (i + 1) + '</h3>' +
+      field('이모지', 'benefits.items[' + i + '].emoji', 'text') +
+      field('제목', 'benefits.items[' + i + '].title', 'text') +
+      field('설명', 'benefits.items[' + i + '].description', 'textarea') +
+      field('하이라이트', 'benefits.items[' + i + '].highlight', 'textarea') +
+      '</div>';
+  });
+  return html;
+}
+
+function renderCafeBanner() {
+  return '<div class="field-group"><h3>카페 배너</h3>' +
+    field('제목', 'cafeBanner.title', 'text') +
+    field('부제목', 'cafeBanner.subtitle', 'textarea') +
+    field('버튼 텍스트', 'cafeBanner.buttonText', 'text') +
+    field('링크 (href)', 'cafeBanner.href', 'text') +
+    '</div>';
+}
+
+function renderFloatingBar() {
+  return '<div class="field-group"><h3>플로팅바</h3>' +
+    field('왼쪽 텍스트', 'floatingBar.leftText', 'text') +
+    field('마감 일시 (ISO 8601)', 'floatingBar.targetDate', 'text', '예: 2026-03-25T20:00:00+09:00') +
+    field('CTA 텍스트', 'floatingBar.ctaText', 'text') +
+    field('CTA 링크', 'floatingBar.ctaHref', 'text') +
+    '<div class="hint" style="margin-top:12px;padding:10px;background:#fff8e1;border-radius:6px;color:#b8860b;">참고: 플로팅바는 라이브클래스 어드민에서 바디/메타 코드로 직접 수정합니다.</div>' +
+    '</div>';
+}
+
+// === 초기화 ===
+renderTabs();
+renderTokenArea();
+if (getToken()) loadConfig();
+</script>
+</body>
+</html>
