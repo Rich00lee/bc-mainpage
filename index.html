@@ -510,7 +510,7 @@
 /* ── 캘린더 (풀기능) ── */
 (function() {
   // [수정 포인트] 일정 데이터
-  const calendarEvents = [
+  var calendarEvents = [
     {
       date: '2026-03-25',
       title: '[퍼거슨][무료] 2년만에 포르쉐 3대 계약한 MDS 단타 매매법(3/25, 수, 저녁 8시)',
@@ -520,13 +520,13 @@
     }
   ];
 
-  const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-  const now = new Date();
-  const todayYear = now.getFullYear();
-  const todayMonth = now.getMonth() + 1;
-  const todayDate = now.getDate();
-  const todayStr = todayYear + '-' + String(todayMonth).padStart(2,'0') + '-' + String(todayDate).padStart(2,'0');
-  const eventDates = new Set(calendarEvents.map(function(e) { return e.date; }));
+  var weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+  var now = new Date();
+  var todayYear = now.getFullYear();
+  var todayMonth = now.getMonth() + 1;
+  var todayDate = now.getDate();
+  var todayStr = todayYear + '-' + String(todayMonth).padStart(2,'0') + '-' + String(todayDate).padStart(2,'0');
+  var eventDates = new Set(calendarEvents.map(function(e) { return e.date; }));
 
   var currentYear = todayYear;
   var currentMonth = todayMonth;
@@ -639,8 +639,78 @@
 
   renderCalendar(currentYear, currentMonth);
   updateRightPanel();
+
+  // config.json fetch 스크립트에서 캘린더 이벤트를 동적으로 교체할 수 있도록 노출
+  window.bcUpdateCalendarEvents = function(newEvents) {
+    calendarEvents = newEvents || [];
+    eventDates = new Set(calendarEvents.map(function(e) { return e.date; }));
+    renderCalendar(currentYear, currentMonth);
+    updateRightPanel();
+  };
 })();
 
+</script>
+
+<script>
+/* ── config.json fetch + apply ── */
+(function() {
+  function getNestedValue(obj, path) {
+    return path.split('.').reduce(function(o, k) {
+      return o && o[k] !== undefined ? o[k] : null;
+    }, obj);
+  }
+
+  function applyConfig(config) {
+    // data-config-text
+    document.querySelectorAll('[data-config-text]').forEach(function(el) {
+      var val = getNestedValue(config, el.getAttribute('data-config-text'));
+      if (val !== null) el.textContent = val;
+    });
+    // data-config-html
+    document.querySelectorAll('[data-config-html]').forEach(function(el) {
+      var val = getNestedValue(config, el.getAttribute('data-config-html'));
+      if (val !== null) el.innerHTML = val;
+    });
+    // data-config-href
+    document.querySelectorAll('[data-config-href]').forEach(function(el) {
+      var val = getNestedValue(config, el.getAttribute('data-config-href'));
+      if (val !== null) el.setAttribute('href', val);
+    });
+    // data-config-src
+    document.querySelectorAll('[data-config-src]').forEach(function(el) {
+      var val = getNestedValue(config, el.getAttribute('data-config-src'));
+      if (val !== null) el.setAttribute('src', val);
+    });
+    // data-config-alt
+    document.querySelectorAll('[data-config-alt]').forEach(function(el) {
+      var val = getNestedValue(config, el.getAttribute('data-config-alt'));
+      if (val !== null) el.setAttribute('alt', val);
+    });
+    // data-config-bg
+    document.querySelectorAll('[data-config-bg]').forEach(function(el) {
+      var val = getNestedValue(config, el.getAttribute('data-config-bg'));
+      if (val !== null) el.style.backgroundImage = "url('" + val + "')";
+    });
+    // external 링크 target="_blank"
+    if (config.quicklinks && config.quicklinks.items) {
+      config.quicklinks.items.forEach(function(item, i) {
+        if (item.external) {
+          var link = document.querySelector('[data-config-href="quicklinks.items.' + i + '.href"]');
+          if (link) { link.setAttribute('target', '_blank'); link.setAttribute('rel', 'noopener noreferrer'); }
+        }
+      });
+    }
+    // 캘린더 이벤트 교체
+    if (config.calendar && config.calendar.events && typeof window.bcUpdateCalendarEvents === 'function') {
+      window.bcUpdateCalendarEvents(config.calendar.events);
+    }
+  }
+
+  fetch('config.json?t=' + Date.now())
+    .then(function(res) { if (!res.ok) throw new Error('fetch failed'); return res.json(); })
+    .then(applyConfig)
+    .catch(function() { /* HTML 기본값 유지 */ });
+})();
 </script>
 
 <script>
