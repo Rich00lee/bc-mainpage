@@ -39,6 +39,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .field-inline { display: flex; align-items: center; gap: 8px; }
 .field-inline label { margin-bottom: 0; }
 .field .hint { font-size: 12px; color: #999; margin-top: 4px; }
+.image-field { display: flex; gap: 8px; align-items: center; }
+.image-field input[type="text"] { flex: 1; }
+.btn-upload { padding: 8px 14px; border: 1px solid #2a64f6; border-radius: 6px; background: #f8faff; color: #2a64f6; font-size: 13px; cursor: pointer; white-space: nowrap; }
+.btn-upload:hover { background: #eef3ff; }
+.img-preview { max-width: 200px; max-height: 120px; border-radius: 6px; margin-top: 8px; object-fit: cover; border: 1px solid #e5e5e5; }
 
 /* 캘린더 이벤트 카드 */
 .event-card { border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 12px; position: relative; }
@@ -305,7 +310,70 @@ function field(label, path, type, hint) {
   if (type === 'textarea') {
     return '<div class="field"><label>' + label + '</label><textarea data-path="' + path + '">' + escapeHtml(val) + '</textarea>' + (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
   }
+  if (type === 'image') {
+    const imgId = 'img-preview-' + path.replace(/[\.\[\]]/g, '-');
+    const previewSrc = val || '';
+    return '<div class="field"><label>' + label + '</label>' +
+      '<div class="image-field">' +
+        '<input type="text" data-path="' + path + '" value="' + escapeHtml(val) + '" placeholder="이미지 URL">' +
+        '<label class="btn-upload"><input type="file" accept="image/*" onchange="uploadImage(this, \'' + path + '\')" hidden>파일 업로드</label>' +
+      '</div>' +
+      (previewSrc ? '<img class="img-preview" id="' + imgId + '" src="' + escapeHtml(previewSrc) + '" onerror="this.style.display=\'none\'">' : '<img class="img-preview" id="' + imgId + '" style="display:none">') +
+      (hint ? '<div class="hint">' + hint + '</div>' : '') +
+      '</div>';
+  }
   return '<div class="field"><label>' + label + '</label><input type="text" data-path="' + path + '" value="' + escapeHtml(val) + '">' + (hint ? '<div class="hint">' + hint + '</div>' : '') + '</div>';
+}
+
+// === 이미지 업로드 ===
+async function uploadImage(fileInput, configPath) {
+  const file = fileInput.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('이미지 파일만 업로드 가능합니다', 'error'); return; }
+  if (file.size > 5 * 1024 * 1024) { showToast('5MB 이하 파일만 업로드 가능합니다', 'error'); return; }
+
+  const ext = file.name.split('.').pop().toLowerCase();
+  const safeName = Date.now() + '.' + ext;
+  const repoPath = 'images/' + safeName;
+
+  showToast('업로드 중...', 'success');
+
+  try {
+    const base64 = await readFileAsBase64(file);
+
+    const res = await apiFetch('/repos/' + REPO + '/contents/' + repoPath, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: 'image: ' + file.name + ' 업로드 via admin',
+        content: base64
+      })
+    });
+
+    if (!res.ok) throw new Error('업로드 실패: ' + res.status);
+
+    // URL 필드 업데이트
+    const input = document.querySelector('[data-path="' + configPath + '"]');
+    if (input) input.value = repoPath;
+
+    // 미리보기 업데이트
+    const imgId = 'img-preview-' + configPath.replace(/[\.\[\]]/g, '-');
+    const preview = document.getElementById(imgId);
+    if (preview) { preview.src = URL.createObjectURL(file); preview.style.display = 'block'; }
+
+    showToast('업로드 완료! 저장 버튼을 눌러 반영하세요', 'success');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 function renderAllSections() {
@@ -331,7 +399,7 @@ function renderSection(id) {
 
 function renderHero() {
   return '<div class="field-group"><h3>히어로 이미지</h3>' +
-    field('이미지 URL', 'hero.image', 'text') +
+    field('이미지', 'hero.image', 'image') +
     field('Alt 텍스트', 'hero.alt', 'text') +
     '</div>';
 }
@@ -345,7 +413,7 @@ function renderQuicklinks() {
     html += '<div class="field-group"><h3>퀵링크 #' + (i + 1) + '</h3>' +
       field('라벨', 'quicklinks.items[' + i + '].label', 'text') +
       field('링크 (href)', 'quicklinks.items[' + i + '].href', 'text') +
-      field('아이콘 URL', 'quicklinks.items[' + i + '].icon', 'text') +
+      field('아이콘', 'quicklinks.items[' + i + '].icon', 'image') +
       field('외부 링크 (external)', 'quicklinks.items[' + i + '].external', 'checkbox') +
       '</div>';
   });
@@ -355,7 +423,7 @@ function renderQuicklinks() {
 function renderBestFree() {
   return '<div class="field-group"><h3>BEST 무료특강</h3>' +
     field('섹션 제목', 'bestFree.heading', 'text') +
-    field('썸네일 URL', 'bestFree.card.thumbnail', 'text') +
+    field('썸네일', 'bestFree.card.thumbnail', 'image') +
     field('강의 제목', 'bestFree.card.title', 'text') +
     field('강사명', 'bestFree.card.instructor', 'text') +
     field('메타 정보', 'bestFree.card.meta', 'text') +
@@ -403,7 +471,7 @@ function rerenderSection(id) {
 function renderRegularCourses() {
   return '<div class="field-group"><h3>정규강의</h3>' +
     field('섹션 제목', 'regularCourses.heading', 'text') +
-    field('썸네일 URL', 'regularCourses.card.thumbnail', 'text') +
+    field('썸네일', 'regularCourses.card.thumbnail', 'image') +
     field('강의 제목', 'regularCourses.card.title', 'text') +
     field('강사명', 'regularCourses.card.instructor', 'text') +
     field('메타 정보', 'regularCourses.card.meta', 'text') +
