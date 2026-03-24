@@ -1,0 +1,107 @@
+{
+  "hero": {
+    "image": "hero.webp",
+    "alt": "무료특강 배너"
+  },
+  "quicklinks": {
+    "title": "평생 하는 투자, 블록을 더해<br><span class=\"highlight\">'이기는 게임'</span>을 하세요",
+    "items": [
+      {
+        "label": "무료특강",
+        "href": "/free",
+        "icon": "https://d118wd34u6nbvx.cloudfront.net/mallId-41/57260259-b1d0-4eed-b8fa-e3ac510b5f36-1772519997423.webp",
+        "external": false
+      },
+      {
+        "label": "정규강의",
+        "href": "/Lecture",
+        "icon": "https://d118wd34u6nbvx.cloudfront.net/mallId-41/9e22f95f-c281-46a8-b12b-ec022f76573d-1772519997418.webp",
+        "external": false
+      },
+      {
+        "label": "강사소개",
+        "href": "/teachers",
+        "icon": "https://d118wd34u6nbvx.cloudfront.net/mallId-41/04bce3c4-1d05-4e53-b8ee-ea2a83995252-1772519997425.webp",
+        "external": false
+      },
+      {
+        "label": "고객센터",
+        "href": "javascript:void(0)",
+        "icon": "https://d118wd34u6nbvx.cloudfront.net/mallId-41/49e52e3a-095e-4acb-b386-efad7f100808-1772519997424.webp",
+        "external": false
+      },
+      {
+        "label": "블캠카페",
+        "href": "https://cafe.naver.com/blockcampus",
+        "icon": "https://d118wd34u6nbvx.cloudfront.net/mallId-41/e7e0a499-194d-480e-b7ba-60983fb609b5-1772519997424.webp",
+        "external": true
+      }
+    ]
+  },
+  "bestFree": {
+    "heading": "BEST 무료특강",
+    "card": {
+      "thumbnail": "https://d118wd34u6nbvx.cloudfront.net/mallId-41/ce6e5231-5fc6-4129-b3be-c3f63dcb6c58-1773036269281.webp",
+      "title": "[무료] 2년만에 포르쉐 3대 계약한 MDS 단타 매매법 (3/25, 수, 저녁 8시)",
+      "instructor": "퍼거슨",
+      "meta": "총 0시간 0분 | 1개의 강의",
+      "href": "#"
+    }
+  },
+  "calendar": {
+    "title": "무료특강 일정",
+    "events": [
+      {
+        "date": "2026-03-25",
+        "title": "[퍼거슨][무료] 2년만에 포르쉐 3대 계약한 MDS 단타 매매법(3/25, 수, 저녁 8시)",
+        "instructor": "퍼거슨",
+        "time": "저녁 8시",
+        "type": "무료특강"
+      }
+    ]
+  },
+  "regularCourses": {
+    "heading": "정규강의(마감 임박)",
+    "card": {
+      "thumbnail": "",
+      "title": "정규강의 신청 대기중",
+      "instructor": "",
+      "meta": "총 0시간 0분 | 0개의 강의",
+      "href": "#"
+    }
+  },
+  "benefits": {
+    "items": [
+      {
+        "emoji": "",
+        "title": "상위 1% 검증된 소수정예 강사",
+        "description": "실력이 입증되지 않다면 절대 섭외하지 않습니다.",
+        "highlight": "N가지 엄격한 기준으로\n사전 미팅을 진행"
+      },
+      {
+        "emoji": "",
+        "title": "현재도 시장에서 먹히는 극최신 매매법",
+        "description": "오늘 배워서, 오늘 바로 적용하는 방법만 알증해서 알려드립니다.",
+        "highlight": "과거에만 쓸 수 있는 방법은\n쓸모없는 죽은 이론일 뿐"
+      },
+      {
+        "emoji": "",
+        "title": "남김없이 모두 포함하는 올인원 기획",
+        "description": "수강생이 성공할 수 있게 전폭적으로 지원합니다.",
+        "highlight": "한 강의로 다 끝내도록\n영끌해서 교육을 구성"
+      }
+    ]
+  },
+  "cafeBanner": {
+    "title": "상위 1%만 아는 투자 노하우",
+    "subtitle": "지금 당장 무료로 확인하세요!",
+    "buttonText": "블캠 카페 바로가기 >",
+    "href": "https://cafe.naver.com/blockcampus"
+  },
+  "floatingBar": {
+    "leftText": "선착순 인원이 곧 마감됩니다.",
+    "targetDate": "2026-03-25T20:00:00+09:00",
+    "ctaText": "바로 신청하기",
+    "ctaHref": "https://richtest.liveklass.com/classes/245985"
+  }
+}
